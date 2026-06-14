@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ศูนย์ซ่อมอัจฉริยะ PRO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --bg: #0f1117;
+      --bg2: #161922;
+      --card: #1e2230;
+      --card2: #252a3a;
+      --border: #2e3450;
+      --accent: #00d4ff;
+      --accent2: #7c4dff;
+      --success: #00e676;
+      --danger: #ff4d6d;
+      --warning: #ffd600;
+      --text: #e8eaf6;
+      --text2: #8892b0;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 32px rgba(0,0,0,0.45);
+      --transition: all .18s cubic-bezier(.4,0,.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Prompt', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      margin: 0; color: var(--text);
+      min-height: 100vh; font-size: 15px;
+    }
+    /* ===== LOGIN ===== */
+    #loginScreen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; background: var(--bg);
+    }
+    .login-box {
+      background: var(--card); border-radius: 20px;
+      padding: 44px 36px 36px 36px; width: 340px;
+      box-shadow: var(--shadow), 0 0 0 1px var(--border);
+      text-align: center;
+    }
+    .login-box .logo { font-size: 2.6em; margin-bottom: 4px; }
+    .login-box h2 { font-size: 1.3em; font-weight: 700; margin: 0 0 6px 0; }
+    .login-box p { color: var(--text2); font-size: .93em; margin: 0 0 24px 0; }
+    .role-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .role-tab {
+      flex: 1; padding: 10px; border: 2px solid var(--border);
+      border-radius: var(--radius-sm); cursor: pointer; background: var(--bg2);
+      color: var(--text2); font-size: .93em; font-weight: 600;
+      transition: var(--transition); font-family: 'Prompt', sans-serif;
+    }
+    .role-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,.08); }
+    .login-input {
+      width: 100%; padding: 11px 14px; border-radius: var(--radius-sm);
+      border: 2px solid var(--border); background: var(--bg2); color: var(--text);
+      font-size: 1em; margin-bottom: 12px; font-family: 'Prompt', sans-serif;
+      transition: var(--transition);
+    }
+    .login-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(0,212,255,.15); }
+    .login-btn {
+      width: 100%; padding: 12px; border-radius: var(--radius-sm);
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color: #fff; font-size: 1.05em; font-weight: 700; border: none;
+      cursor: pointer; font-family: 'Prompt', sans-serif; transition: var(--transition);
+      margin-top: 4px;
+    }
+    .login-btn:hover { opacity: .88; transform: translateY(-1px); }
+    .login-err { color: var(--danger); font-size: .93em; margin-top: 8px; min-height: 20px; }
+    .login-hint { color: var(--text2); font-size: .82em; margin-top: 18px; opacity: .7; }
+    /* ===== APP SHELL ===== */
+    #appShell { display: none; }
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 0 20px; height: 56px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .topbar-logo { font-size: 1.2em; font-weight: 700; color: var(--accent); flex: 1; letter-spacing: .01em; }
+    .topbar-logo span { color: var(--text2); font-weight: 400; font-size: .82em; margin-left: 6px; }
+    .topbar-user {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text2); font-size: .93em;
+    }
+    .role-badge {
+      padding: 3px 9px; border-radius: 20px; font-size: .82em; font-weight: 700;
+    }
+    .role-badge.admin { background: rgba(124,77,255,.22); color: var(--accent2); }
+    .role-badge.tech { background: rgba(0,212,255,.14); color: var(--accent); }
+    .logout-btn {
+      background: none; border: 1px solid var(--border); color: var(--text2);
+      border-radius: var(--radius-sm); padding: 5px 11px; cursor: pointer;
+      font-size: .88em; font-family: 'Prompt', sans-serif; transition: var(--transition);
+    }
+    .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+    /* ===== NAV TABS ===== */
+    .nav-tabs {
+      display: flex; background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 0 16px; gap: 4px; overflow-x: auto;
+    }
+    .nav-tab {
+      padding: 13px 18px 11px 18px; border: none; background: none;
+      color: var(--text2); font-size: .97em; font-weight: 600; cursor: pointer;
+      border-bottom: 3px solid transparent; white-space: nowrap;
+      font-family: 'Prompt', sans-serif; transition: var(--transition); display: flex; align-items: center; gap: 7px;
+    }
+    .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .nav-tab:hover:not(.active) { color: var(--text); }
+    /* ===== MAIN CONTENT ===== */
+    .main { padding: 20px 16px; max-width: 860px; margin: 0 auto; }
+    /* ===== DASHBOARD ===== */
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 14px; margin-bottom: 24px; }
+    .dash-card {
+      background: var(--card); border-radius: var(--radius); padding: 20px 16px;
+      border: 1px solid var(--border); display: flex; align-items: center; gap: 14px;
+    }
+    .dash-icon { font-size: 1.8em; }
+    .dash-val { font-size: 1.8em; font-weight: 700; line-height: 1; }
+    .dash-label { color: var(--text2); font-size: .88em; margin-top: 2px; }
+    /* ===== SEARCH BAR ===== */
+    .search-row {
+      display: flex; gap: 8px; margin-bottom: 14px; position: relative; flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1; min-width: 160px; padding: 10px 14px; border-radius: var(--radius-sm);
+      border: 2px solid var(--border); background: var(--card2); color: var(--text);
+      font-size: .97em; font-family: 'Prompt', sans-serif; transition: var(--transition);
+    }
+    .search-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(0,212,255,.12); }
+    .filter-select {
+      padding: 9px 10px; border-radius: var(--radius-sm);
+      border: 2px solid var(--border); background: var(--card2); color: var(--text);
+      font-size: .95em; font-family: 'Prompt', sans-serif; cursor: pointer;
+    }
+    .filter-select:focus { border-color: var(--accent); outline: none; }
+    .suggest-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 50;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); box-shadow: var(--shadow);
+      max-height: 220px; overflow-y: auto; display: none;
+    }
+    .suggest-item {
+      padding: 10px 14px; cursor: pointer; transition: background .1s; font-size: .97em;
+    }
+    .suggest-item:hover, .suggest-item.highlighted { background: var(--card2); color: var(--accent); }
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 16px; border-radius: var(--radius-sm); border: none;
+      font-size: .95em; font-weight: 600; cursor: pointer; font-family: 'Prompt', sans-serif;
+      transition: var(--transition); white-space: nowrap;
+    }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-success { background: var(--success); color: #000; }
+    .btn-success:hover { opacity: .85; }
+    .btn-warning { background: var(--warning); color: #000; }
+    .btn-warning:hover { opacity: .85; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover { opacity: .85; }
+    .btn-ghost {
+      background: transparent; color: var(--text2);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 6px 11px; font-size: .88em; }
+    .btn-xs { padding: 4px 9px; font-size: .83em; }
+    /* ===== CARDS ===== */
+    .item-card {
+      background: var(--card); border-radius: var(--radius);
+      border: 1px solid var(--border); padding: 16px 14px; margin-bottom: 12px;
+      transition: var(--transition);
+    }
+    .item-card:hover { border-color: rgba(0,212,255,.35); box-shadow: 0 2px 20px rgba(0,212,255,.08); }
+    .card-head {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 10px; margin-bottom: 8px;
+    }
+    .card-title { font-weight: 700; font-size: 1.05em; }
+    .card-actions { display: flex; gap: 7px; flex-shrink: 0; }
+    .badge {
+      display: inline-block; padding: 3px 9px; border-radius: 20px;
+      font-size: .83em; font-weight: 600; margin: 2px 2px 2px 0;
+    }
+    .badge-error { background: rgba(255,77,109,.18); color: var(--danger); border: 1px solid rgba(255,77,109,.3); }
+    .badge-model { background: rgba(0,212,255,.12); color: var(--accent); border: 1px solid rgba(0,212,255,.2); }
+    .badge-type { background: rgba(124,77,255,.18); color: #b388ff; border: 1px solid rgba(124,77,255,.25); }
+    .badge-qty { background: rgba(0,230,118,.14); color: var(--success); border: 1px solid rgba(0,230,118,.25); }
+    .badge-brand { background: rgba(255,214,0,.12); color: var(--warning); border: 1px solid rgba(255,214,0,.2); }
+    .badge-low { background: rgba(255,77,109,.14); color: var(--danger); }
+    .card-meta { font-size: .91em; color: var(--text2); margin-top: 6px; line-height: 1.7; }
+    .card-meta b { color: var(--text); }
+    /* ===== TOOLBAR ROW ===== */
+    .toolbar-row {
+      display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
+    }
+    .toolbar-row .spacer { flex: 1; }
+    /* ===== IMAGE GALLERY ===== */
+    .img-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 8px; margin: 10px 0 6px 0;
+    }
+    .img-thumb {
+      aspect-ratio: 1/1; object-fit: cover; border-radius: 8px;
+      border: 2px solid var(--border); cursor: pointer;
+      transition: var(--transition); background: var(--card2);
+    }
+    .img-thumb:hover { border-color: var(--accent); transform: scale(1.04); box-shadow: 0 0 12px rgba(0,212,255,.3); }
+    .img-count { font-size: .82em; color: var(--text2); margin-top: 3px; }
+    /* ===== GALLERY COMPARE VIEW ===== */
+    #galleryModal {
+      display: none; position: fixed; z-index: 300; inset: 0;
+      background: rgba(0,0,0,.95); flex-direction: column;
+    }
+    #galleryModal.active { display: flex; }
+    .gallery-top {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .gallery-top h3 { flex: 1; margin: 0; font-size: 1em; }
+    .gallery-tabs { display: flex; gap: 6px; }
+    .gallery-tab-btn {
+      padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+      background: none; color: var(--text2); cursor: pointer;
+      font-family: 'Prompt', sans-serif; font-size: .88em; transition: var(--transition);
+    }
+    .gallery-tab-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,.1); }
+    .gallery-body { flex: 1; overflow: auto; padding: 16px; }
+    /* Single view */
+    .gallery-single-view {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; gap: 14px;
+    }
+    .gallery-single-view img {
+      max-height: 60vh; max-width: 90vw; border-radius: 10px;
+      object-fit: contain; background: #111;
+    }
+    .gallery-nav { display: flex; align-items: center; gap: 16px; }
+    .gallery-nav-btn {
+      width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--border);
+      background: var(--card2); color: var(--text); font-size: 1.2em;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .gallery-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .gallery-counter { color: var(--text2); font-size: .9em; }
+    .gallery-caption { color: var(--text2); font-size: .9em; text-align: center; max-width: 400px; }
+    /* Grid view */
+    .gallery-grid-view {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .gallery-grid-item {
+      border-radius: 10px; overflow: hidden; cursor: pointer;
+      border: 2px solid var(--border); background: var(--card2);
+      transition: var(--transition); position: relative;
+    }
+    .gallery-grid-item:hover { border-color: var(--accent); transform: scale(1.03); }
+    .gallery-grid-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+    .gallery-grid-item .ggi-num {
+      position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.65);
+      color: #fff; font-size: .78em; padding: 2px 7px; border-radius: 10px;
+    }
+    /* Compare view */
+    .gallery-compare-view {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; height: 100%;
+    }
+    .compare-panel {
+      background: var(--card); border-radius: var(--radius); padding: 12px;
+      display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--border);
+    }
+    .compare-panel select {
+      width: 100%; padding: 8px 10px; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border); background: var(--card2); color: var(--text);
+      font-family: 'Prompt', sans-serif; font-size: .9em;
+    }
+    .compare-img-wrap {
+      flex: 1; border-radius: 8px; overflow: hidden; background: #111;
+      display: flex; align-items: center; justify-content: center; min-height: 160px;
+    }
+    .compare-img-wrap img { max-width: 100%; max-height: 42vh; object-fit: contain; }
+    .compare-info { font-size: .84em; color: var(--text2); line-height: 1.6; }
+    /* ===== MODAL ===== */
+    #formModal {
+      display: none; position: fixed; z-index: 200; inset: 0;
+      background: rgba(0,0,0,.8); align-items: center; justify-content: center;
+    }
+    #formModal.active { display: flex; }
+    .modal-box {
+      background: var(--card); border-radius: 18px; width: 94vw; max-width: 460px;
+      max-height: 92vh; overflow-y: auto; padding: 28px 22px 22px 22px;
+      position: relative; box-shadow: var(--shadow), 0 0 0 1px var(--border);
+    }
+    .modal-box h2 { margin: 0 0 18px 0; font-size: 1.1em; }
+    .modal-close {
+      position: absolute; top: 14px; right: 16px; background: none; border: none;
+      color: var(--text2); font-size: 1.6em; cursor: pointer; line-height: 1;
+      transition: var(--transition);
+    }
+    .modal-close:hover { color: var(--danger); }
+    .form-group { margin-bottom: 13px; }
+    .form-group label { display: block; font-size: .9em; color: var(--text2); margin-bottom: 5px; font-weight: 600; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 10px 12px; border-radius: var(--radius-sm);
+      border: 2px solid var(--border); background: var(--bg2); color: var(--text);
+      font-size: .97em; font-family: 'Prompt', sans-serif; transition: var(--transition);
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(0,212,255,.1);
+    }
+    .form-group textarea { resize: vertical; min-height: 60px; }
+    /* Image upload in form */
+    .upload-zone {
+      border: 2px dashed var(--border); border-radius: var(--radius-sm);
+      padding: 20px; text-align: center; cursor: pointer;
+      transition: var(--transition); color: var(--text2);
+    }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,.04); }
+    .upload-zone i { font-size: 1.8em; margin-bottom: 6px; display: block; }
+    .form-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .form-thumb-wrap { position: relative; }
+    .form-thumb-img { width: 56px; height: 56px; object-fit: cover; border-radius: 7px; border: 2px solid var(--border); cursor: pointer; }
+    .form-thumb-del {
+      position: absolute; top: -6px; right: -6px; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--danger); color: #fff; border: none;
+      cursor: pointer; font-size: .78em; display: flex; align-items: center; justify-content: center;
+    }
+    .save-btn {
+      width: 100%; padding: 13px; border-radius: var(--radius-sm); border: none;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color: #fff; font-size: 1.05em; font-weight: 700; cursor: pointer;
+      font-family: 'Prompt', sans-serif; margin-top: 8px; transition: var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .save-btn:hover { opacity: .88; }
+    /* ===== STOCK ADJUST ===== */
+    .qty-row { display: flex; align-items: center; gap: 8px; }
+    .qty-btn {
+      width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--border);
+      background: var(--card2); color: var(--text); cursor: pointer; font-size: 1.1em;
+      display: flex; align-items: center; justify-content: center; transition: var(--transition);
+    }
+    .qty-btn:hover { border-color: var(--accent); }
+    .qty-input {
+      width: 60px; text-align: center; padding: 6px 4px;
+      border-radius: var(--radius-sm); border: 2px solid var(--border);
+      background: var(--card2); color: var(--text); font-size: .97em;
+      font-family: 'Prompt', sans-serif;
+    }
+    /* ===== EMPTY STATE ===== */
+    .empty-state { text-align: center; padding: 48px 16px; color: var(--text2); }
+    .empty-state i { font-size: 2.8em; display: block; margin-bottom: 10px; opacity: .4; }
+    .empty-state p { font-size: .95em; }
+    /* ===== TOAST ===== */
+    #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+    .toast {
+      background: var(--card); color: var(--text); padding: 12px 18px;
+      border-radius: 10px; box-shadow: var(--shadow); font-size: .93em;
+      border-left: 4px solid var(--accent); animation: slideInRight .22s ease;
+      max-width: 280px;
+    }
+    .toast.success { border-left-color: var(--success); }
+    .toast.error { border-left-color: var(--danger); }
+    @keyframes slideInRight { from { opacity:0; transform: translateX(40px); } to { opacity:1; transform: none; } }
+    /* ===== UTIL BAR ===== */
+    .util-bar {
+      display: flex; gap: 7px; flex-wrap: wrap; align-items: center;
+      background: var(--card2); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 16px;
+    }
+    .util-bar .spacer { flex: 1; }
+    /* ===== SECTION DISPLAY ===== */
+    .section-content { display: none; }
+    .section-content.active { display: block; }
+    /* ===== LIST VIEW ALL ===== */
+    .view-toggle { display: flex; gap: 6px; }
+    .view-btn {
+      padding: 7px 11px; border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+      background: none; color: var(--text2); cursor: pointer; font-size: .9em;
+      font-family: 'Prompt', sans-serif; transition: var(--transition);
+    }
+    .view-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,.09); }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .main { padding: 12px 10px; }
+      .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery-compare-view { grid-template-columns: 1fr; }
+      .modal-box { border-radius: 0; max-height: 100vh; height: 100dvh; overflow-y: auto; }
+      .topbar { padding: 0 12px; }
+      .topbar-logo span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="logo">🔧</div>
+    <h2>ศูนย์ซ่อมอัจฉริยะ PRO</h2>
+    <p>ระบบจัดการงานซ่อมครบวงจร</p>
+    <div class="role-tabs">
+      <button class="role-tab active" onclick="selectRole('admin',this)"><i class="bi bi-shield-check"></i> Admin</button>
+      <button class="role-tab" onclick="selectRole('tech',this)"><i class="bi bi-tools"></i> ช่าง</button>
+    </div>
+    <input class="login-input" id="loginUser" type="text" placeholder="ชื่อผู้ใช้" autocomplete="username">
+    <input class="login-input" id="loginPass" type="password" placeholder="รหัสผ่าน" autocomplete="current-password">
+    <button class="login-btn" onclick="doLogin()"><i class="bi bi-box-arrow-in-right"></i> เข้าสู่ระบบ</button>
+    <div class="login-err" id="loginErr"></div>
+    <div class="login-hint">Admin: admin / admin1234 &nbsp;|&nbsp; ช่าง: tech / tech1234</div>
+  </div>
+</div>
+
+<!-- ===== APP SHELL ===== -->
+<div id="appShell">
+  <div class="topbar">
+    <div class="topbar-logo">⚡ Smart Service <span>PRO</span></div>
+    <div class="topbar-user">
+      <span class="role-badge" id="topRoleBadge"></span>
+      <span id="topUsername"></span>
+      <button class="logout-btn" onclick="doLogout()"><i class="bi bi-box-arrow-right"></i> ออก</button>
+    </div>
+  </div>
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" data-tab="dashboard" onclick="switchTab(this)"><i class="bi bi-grid-1x2"></i> Dashboard</button>
+    <button class="nav-tab" data-tab="error" onclick="switchTab(this)"><i class="bi bi-exclamation-octagon"></i> Error Code</button>
+    <button class="nav-tab" data-tab="stock" onclick="switchTab(this)"><i class="bi bi-box-seam"></i> คลังอะไหล่</button>
+    <button class="nav-tab" data-tab="gallery" onclick="switchTab(this)"><i class="bi bi-images"></i> Gallery</button>
+  </div>
+
+  <div class="main">
+    <!-- DASHBOARD -->
+    <div class="section-content active" id="tab-dashboard">
+      <div class="dashboard-grid" id="dashboardGrid"></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px; background:var(--card); border-radius:var(--radius); padding:16px; border:1px solid var(--border);">
+          <div style="font-weight:700; margin-bottom:12px; color:var(--accent);"><i class="bi bi-clock-history"></i> Error Code ล่าสุด</div>
+          <div id="recentErrors"></div>
+        </div>
+        <div style="flex:1; min-width:200px; background:var(--card); border-radius:var(--radius); padding:16px; border:1px solid var(--border);">
+          <div style="font-weight:700; margin-bottom:12px; color:var(--warning);"><i class="bi bi-exclamation-triangle"></i> สต๊อกต่ำ (&lt;5)</div>
+          <div id="lowStockList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERROR CODE -->
+    <div class="section-content" id="tab-error">
+      <div class="util-bar" id="errorUtilBar">
+        <button class="btn btn-success btn-sm" onclick="exportData('error')"><i class="bi bi-download"></i> Export</button>
+        <button class="btn btn-warning btn-sm" onclick="document.getElementById('importErrorFile').click()"><i class="bi bi-upload"></i> Import</button>
+        <input type="file" id="importErrorFile" accept=".json" style="display:none" onchange="importData('error',this)">
+        <span class="spacer"></span>
+        <div class="view-toggle">
+          <button class="view-btn active" id="errViewAll" onclick="setErrorView('all',this)">ทั้งหมด</button>
+          <button class="view-btn" id="errViewSearch" onclick="setErrorView('search',this)">ค้นหา</button>
+        </div>
+      </div>
+      <div class="search-row" style="position:relative">
+        <input class="search-input" id="searchError" type="text" placeholder="🔍 พิมพ์เพื่อค้นหา..." autocomplete="off">
+        <select class="filter-select" id="searchErrorFilter">
+          <option value="brand">แบรนด์</option>
+          <option value="model">รุ่น</option>
+          <option value="errorCode">Error Code</option>
+          <option value="parts">อะไหล่</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="clearErrorSearch()"><i class="bi bi-x-lg"></i></button>
+        <div class="suggest-dropdown" id="errorSuggest"></div>
+      </div>
+      <div class="toolbar-row">
+        <button class="btn btn-primary" id="addErrorBtn" onclick="showErrorForm()"><i class="bi bi-plus-circle"></i> เพิ่ม Error Code</button>
+        <span class="spacer"></span>
+        <span id="errorCount" style="color:var(--text2); font-size:.9em;"></span>
+      </div>
+      <div id="errorList"></div>
+    </div>
+
+    <!-- STOCK -->
+    <div class="section-content" id="tab-stock">
+      <div class="util-bar">
+        <button class="btn btn-success btn-sm" onclick="exportData('stock')"><i class="bi bi-download"></i> Export</button>
+        <button class="btn btn-warning btn-sm" onclick="document.getElementById('importStockFile').click()"><i class="bi bi-upload"></i> Import</button>
+        <input type="file" id="importStockFile" accept=".json" style="display:none" onchange="importData('stock',this)">
+        <span class="spacer"></span>
+        <div class="view-toggle">
+          <button class="view-btn active" id="stockViewAll" onclick="setStockView('all',this)">ทั้งหมด</button>
+          <button class="view-btn" id="stockViewSearch" onclick="setStockView('search',this)">ค้นหา</button>
+        </div>
+      </div>
+      <div class="search-row" style="position:relative">
+        <input class="search-input" id="searchStock" type="text" placeholder="🔍 พิมพ์เพื่อค้นหา..." autocomplete="off">
+        <select class="filter-select" id="searchStockFilter">
+          <option value="partBrand">แบรนด์</option>
+          <option value="forModel">รุ่น</option>
+          <option value="partName">ชื่ออะไหล่</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="clearStockSearch()"><i class="bi bi-x-lg"></i></button>
+        <div class="suggest-dropdown" id="stockSuggest"></div>
+      </div>
+      <div class="toolbar-row">
+        <button class="btn btn-primary" id="addStockBtn" onclick="showStockForm()"><i class="bi bi-plus-circle"></i> เพิ่มอะไหล่</button>
+        <span class="spacer"></span>
+        <span id="stockCount" style="color:var(--text2); font-size:.9em;"></span>
+      </div>
+      <div id="stockList"></div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="section-content" id="tab-gallery">
+      <div style="margin-bottom:16px">
+        <div style="font-weight:700; font-size:1.05em; margin-bottom:6px; color:var(--accent);"><i class="bi bi-images"></i> Gallery รูปภาพทั้งหมด</div>
+        <div style="color:var(--text2); font-size:.9em;">รวมรูปภาพจากทุก Error Code และอะไหล่ สามารถดูและเปรียบเทียบได้</div>
+      </div>
+      <!-- Filter -->
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; align-items:center;">
+        <select class="filter-select" id="gallerySource" onchange="renderGalleryPage()">
+          <option value="all">ทั้งหมด</option>
+          <option value="error">Error Code</option>
+          <option value="stock">อะไหล่</option>
+        </select>
+        <input class="search-input" style="max-width:200px;" id="gallerySearch" type="text" placeholder="กรองชื่อ..." oninput="renderGalleryPage()">
+        <span class="spacer"></span>
+        <button class="btn btn-ghost btn-sm" onclick="openCompareModal()"><i class="bi bi-layout-split"></i> เปรียบเทียบรูป</button>
+      </div>
+      <div id="galleryPageGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap:10px;"></div>
+      <div id="galleryEmpty" style="display:none">
+        <div class="empty-state"><i class="bi bi-images"></i><p>ยังไม่มีรูปภาพ เพิ่มรูปใน Error Code หรืออะไหล่ก่อนนะครับ</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GALLERY MODAL (Single/Grid/Compare) ===== -->
+<div id="galleryModal">
+  <div class="gallery-top">
+    <h3 id="galleryModalTitle">Gallery</h3>
+    <div class="gallery-tabs">
+      <button class="gallery-tab-btn active" onclick="setGalleryModalTab('single',this)"><i class="bi bi-image"></i> ดูรูป</button>
+      <button class="gallery-tab-btn" onclick="setGalleryModalTab('grid',this)"><i class="bi bi-grid-3x3-gap"></i> ทั้งหมด</button>
+      <button class="gallery-tab-btn" onclick="setGalleryModalTab('compare',this)"><i class="bi bi-layout-split"></i> เปรียบเทียบ</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="closeGalleryModal()"><i class="bi bi-x-lg"></i> ปิด</button>
+  </div>
+  <div class="gallery-body" id="galleryModalBody"></div>
+</div>
+
+<!-- ===== FORM MODAL ===== -->
+<div id="formModal">
+  <div class="modal-box" id="formModalBox">
+    <button class="modal-close" onclick="closeFormModal()"><i class="bi bi-x"></i></button>
+    <div id="formModalContent"></div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toastContainer"></div>
+
+<script>
+// ===== STATE =====
+const ERROR_KEY = 'ssc_errors';
+const STOCK_KEY = 'ssc_stock';
+
+const USERS = {
+  admin: { password: 'admin1234', role: 'admin', display: 'Admin' },
+  tech:  { password: 'tech1234',  role: 'tech',  display: 'ช่าง' }
+};
+
+let currentUser = null;
+let currentRole = null;
+let selectedLoginRole = 'admin';
+let errorViewMode = 'all';
+let stockViewMode = 'all';
+
+// Gallery state
+let galleryModalList = [];
+let galleryModalIdx = 0;
+let galleryModalTab = 'single';
+let galleryModalContext = {};
+
+// ===== UTILS =====
+function loadData(key, fallback=[]) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; }
+}
+function saveData(key, arr) { localStorage.setItem(key, JSON.stringify(arr)); }
+function esc(str) {
+  return String(str||"").replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+function uuid() { return 'id_' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
+
+function toast(msg, type='') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+// ===== LOGIN =====
+function selectRole(role, el) {
+  selectedLoginRole = role;
+  document.querySelectorAll('.role-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginErr');
+  if (!USERS[u] || USERS[u].password !== p || USERS[u].role !== selectedLoginRole) {
+    err.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+    return;
+  }
+  currentUser = u; currentRole = USERS[u].role;
+  err.textContent = '';
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'block';
+  const badge = document.getElementById('topRoleBadge');
+  badge.textContent = currentRole === 'admin' ? 'Admin' : 'ช่าง';
+  badge.className = 'role-badge ' + currentRole;
+  document.getElementById('topUsername').textContent = USERS[u].display;
+  applyRoleUI();
+  renderDashboard();
+  renderErrorList();
+  renderStockList();
+  renderGalleryPage();
+}
+
+function doLogout() {
+  currentUser = null; currentRole = null;
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function applyRoleUI() {
+  const isTech = currentRole === 'tech';
+  // Tech: hide export/import
+  document.querySelectorAll('.util-bar').forEach(b => b.style.display = isTech ? 'none' : 'flex');
+}
+
+// ===== TABS =====
+function switchTab(el) {
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const tab = el.dataset.tab;
+  document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const errors = loadData(ERROR_KEY);
+  const stocks = loadData(STOCK_KEY);
+  const allImgs = getAllImages();
+  const lowStock = stocks.filter(s => s.qty < 5);
+
+  document.getElementById('dashboardGrid').innerHTML = `
+    <div class="dash-card">
+      <div class="dash-icon" style="color:var(--danger)">⚠️</div>
+      <div><div class="dash-val">${errors.length}</div><div class="dash-label">Error Code ทั้งหมด</div></div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-icon" style="color:var(--success)">📦</div>
+      <div><div class="dash-val">${stocks.length}</div><div class="dash-label">รายการอะไหล่</div></div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-icon" style="color:var(--warning)">⚡</div>
+      <div><div class="dash-val">${lowStock.length}</div><div class="dash-label">สต๊อกต่ำ</div></div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-icon" style="color:var(--accent)">🖼️</div>
+      <div><div class="dash-val">${allImgs.length}</div><div class="dash-label">รูปภาพทั้งหมด</div></div>
+    </div>
+  `;
+
+  const recentErrors = [...errors].reverse().slice(0,5);
+  document.getElementById('recentErrors').innerHTML = recentErrors.length ? recentErrors.map(e => `
+    <div style="padding:7px 0; border-bottom:1px solid var(--border); font-size:.91em;">
+      <span class="badge badge-brand">${esc(e.brand)}</span>
+      <span class="badge badge-model">${esc(e.model)}</span>
+      <span class="badge badge-error">${esc(e.errorCode)}</span>
+    </div>
+  `).join('') : '<div style="color:var(--text2);font-size:.9em;">ยังไม่มีข้อมูล</div>';
+
+  document.getElementById('lowStockList').innerHTML = lowStock.length ? lowStock.map(s => `
+    <div style="padding:7px 0; border-bottom:1px solid var(--border); font-size:.91em; display:flex; justify-content:space-between; align-items:center;">
+      <span>${esc(s.partName)}</span>
+      <span class="badge badge-low">${s.qty} ชิ้น</span>
+    </div>
+  `).join('') : '<div style="color:var(--success);font-size:.9em;"><i class="bi bi-check-circle"></i> สต๊อกปกติทุกรายการ</div>';
+}
+
+// ===== ERROR CODE =====
+let errorView = 'all';
+let errorQuery = '';
+let errorField = 'brand';
+
+function setErrorView(mode, el) {
+  errorView = mode;
+  document.querySelectorAll('#tab-error .view-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderErrorList();
+}
+
+function renderErrorList() {
+  const arr = loadData(ERROR_KEY);
+  let list;
+  if (errorView === 'all' && !errorQuery) {
+    list = arr;
+  } else if (errorQuery) {
+    list = arr.filter(e => (e[errorField]||'').toLowerCase().includes(errorQuery.toLowerCase()));
+  } else {
+    list = arr;
+  }
+  document.getElementById('errorCount').textContent = `${list.length} รายการ`;
+  if (!list.length) {
+    document.getElementById('errorList').innerHTML = `<div class="empty-state"><i class="bi bi-database-x"></i><p>ไม่พบข้อมูล</p></div>`;
+    return;
+  }
+  document.getElementById('errorList').innerHTML = list.map(item => renderErrorCard(item)).join('');
+}
+
+function renderErrorCard(item) {
+  const imgs = item.images || [];
+  const canEdit = currentRole === 'admin';
+  return `
+    <div class="item-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">${esc(item.brand)} <span class="badge badge-model">${esc(item.model)}</span></div>
+          <div style="margin-top:4px;">
+            <span class="badge badge-type">${esc(item.type||'')}</span>
+            <span class="badge badge-error"><i class="bi bi-exclamation-circle"></i> ${esc(item.errorCode||'')}</span>
+          </div>
+        </div>
+        ${canEdit ? `<div class="card-actions">
+          <button class="btn btn-warning btn-xs" onclick="showErrorForm('${item.id}')"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-danger btn-xs" onclick="deleteError('${item.id}')"><i class="bi bi-trash"></i></button>
+        </div>` : ''}
+      </div>
+      ${imgs.length ? `
+        <div class="img-grid">
+          ${imgs.map((img,i) => `<img src="${img}" class="img-thumb" onclick="openGalleryModal(${JSON.stringify(imgs).replace(/"/g,'&quot;')},${i},'${esc(item.brand)} ${esc(item.model)} - ${esc(item.errorCode)}')" alt="รูป${i+1}">`).join('')}
+        </div>
+        <div class="img-count"><i class="bi bi-images"></i> ${imgs.length} รูป — คลิกเพื่อดูและเปรียบเทียบ</div>
+      ` : ''}
+      <div class="card-meta">
+        <div><b>อะไหล่ที่เสีย:</b> ${esc(item.parts||'-')}</div>
+        <div><b>สิ่งที่ควรเช็ค:</b> ${esc(item.checkList||'-')}</div>
+        <div><b>วิธีแก้ไข:</b> ${esc(item.solution||'-')}</div>
+      </div>
+    </div>
+  `;
+}
+
+// Search
+const searchErrorInput = document.getElementById('searchError');
+const searchErrorFilter = document.getElementById('searchErrorFilter');
+const errorSuggestBox = document.getElementById('errorSuggest');
+
+searchErrorInput.addEventListener('input', function() {
+  errorQuery = this.value.trim();
+  errorField = searchErrorFilter.value;
+  showErrorSuggestions();
+  renderErrorList();
+});
+searchErrorFilter.addEventListener('change', function() {
+  errorField = this.value;
+  errorQuery = '';
+  searchErrorInput.value = '';
+  errorSuggestBox.style.display = 'none';
+  renderErrorList();
+});
+searchErrorInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { errorSuggestBox.style.display = 'none'; renderErrorList(); }
+});
+searchErrorInput.addEventListener('blur', () => setTimeout(() => errorSuggestBox.style.display='none', 160));
+searchErrorInput.addEventListener('focus', showErrorSuggestions);
+
+function showErrorSuggestions() {
+  const val = searchErrorInput.value.trim().toLowerCase();
+  const field = searchErrorFilter.value;
+  if (!val) { errorSuggestBox.style.display='none'; return; }
+  const arr = loadData(ERROR_KEY);
+  const uniq = [...new Set(arr.map(e=>(e[field]||'')).filter(v=>v.toLowerCase().includes(val)))].slice(0,8);
+  errorSuggestBox.innerHTML = uniq.map(s=>`<div class="suggest-item" onmousedown="pickErrorSuggest('${s.replace(/'/g,"\\'")}')"><i class="bi bi-search"></i> ${esc(s)}</div>`).join('');
+  errorSuggestBox.style.display = uniq.length ? 'block' : 'none';
+}
+
+function pickErrorSuggest(val) {
+  searchErrorInput.value = val;
+  errorQuery = val;
+  errorSuggestBox.style.display = 'none';
+  renderErrorList();
+}
+function clearErrorSearch() {
+  searchErrorInput.value = '';
+  errorQuery = '';
+  errorSuggestBox.style.display = 'none';
+  renderErrorList();
+}
+
+// CRUD Error
+window.deleteError = function(id) {
+  if (!confirm('ต้องการลบข้อมูลนี้?')) return;
+  let arr = loadData(ERROR_KEY).filter(e=>e.id!==id);
+  saveData(ERROR_KEY, arr);
+  toast('ลบข้อมูลแล้ว', 'error');
+  renderErrorList();
+  renderDashboard();
+  renderGalleryPage();
+};
+
+// ===== STOCK =====
+let stockView = 'all';
+let stockQuery = '';
+let stockField = 'partBrand';
+
+function setStockView(mode, el) {
+  stockView = mode;
+  document.querySelectorAll('#tab-stock .view-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderStockList();
+}
+
+function renderStockList() {
+  const arr = loadData(STOCK_KEY);
+  let list;
+  if (stockView === 'all' && !stockQuery) {
+    list = arr;
+  } else if (stockQuery) {
+    list = arr.filter(e => (e[stockField]||'').toLowerCase().includes(stockQuery.toLowerCase()));
+  } else {
+    list = arr;
+  }
+  document.getElementById('stockCount').textContent = `${list.length} รายการ`;
+  if (!list.length) {
+    document.getElementById('stockList').innerHTML = `<div class="empty-state"><i class="bi bi-box"></i><p>ไม่พบข้อมูลอะไหล่</p></div>`;
+    return;
+  }
+  document.getElementById('stockList').innerHTML = list.map(item => renderStockCard(item)).join('');
+}
+
+function renderStockCard(item) {
+  const imgs = item.images || [];
+  const canEdit = currentRole === 'admin';
+  const low = item.qty < 5;
+  return `
+    <div class="item-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">${esc(item.partName)} ${item.forModel?`<span class="badge badge-model">${esc(item.forModel)}</span>`:''}</div>
+          <div style="margin-top:4px;">
+            <span class="badge badge-brand">${esc(item.partBrand||'-')}</span>
+            <span class="badge ${low?'badge-low':'badge-qty'}">${item.qty} ชิ้น ${low?'⚠️':''}</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          ${canEdit ? `
+            <button class="btn btn-warning btn-xs" onclick="showStockForm('${item.id}')"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-danger btn-xs" onclick="deleteStock('${item.id}')"><i class="bi bi-trash"></i></button>
+          ` : ''}
+          <button class="btn btn-ghost btn-xs" onclick="adjustQty('${item.id}', -1)"><i class="bi bi-dash"></i></button>
+          <button class="btn btn-ghost btn-xs" onclick="adjustQty('${item.id}', 1)"><i class="bi bi-plus"></i></button>
+        </div>
+      </div>
+      ${imgs.length ? `
+        <div class="img-grid">
+          ${imgs.map((img,i) => `<img src="${img}" class="img-thumb" onclick="openGalleryModal(${JSON.stringify(imgs).replace(/"/g,'&quot;')},${i},'อะไหล่: ${esc(item.partName)}')" alt="รูป${i+1}">`).join('')}
+        </div>
+        <div class="img-count"><i class="bi bi-images"></i> ${imgs.length} รูป</div>
+      ` : ''}
+      ${item.partNote ? `<div class="card-meta"><b>หมายเหตุ:</b> ${esc(item.partNote)}</div>` : ''}
+    </div>
+  `;
+}
+
+function adjustQty(id, delta) {
+  let arr = loadData(STOCK_KEY);
+  const idx = arr.findIndex(e=>e.id===id);
+  if (idx<0) return;
+  arr[idx].qty = Math.max(0, (arr[idx].qty||0) + delta);
+  saveData(STOCK_KEY, arr);
+  renderStockList();
+  renderDashboard();
+  toast(delta>0 ? 'เพิ่มจำนวนแล้ว' : 'ลดจำนวนแล้ว', delta>0?'success':'');
+}
+
+const searchStockInput = document.getElementById('searchStock');
+const searchStockFilter = document.getElementById('searchStockFilter');
+const stockSuggestBox = document.getElementById('stockSuggest');
+
+searchStockInput.addEventListener('input', function() {
+  stockQuery = this.value.trim();
+  stockField = searchStockFilter.value;
+  showStockSuggestions();
+  renderStockList();
+});
+searchStockFilter.addEventListener('change', function() {
+  stockField = this.value;
+  stockQuery = '';
+  searchStockInput.value = '';
+  stockSuggestBox.style.display = 'none';
+  renderStockList();
+});
+searchStockInput.addEventListener('keydown', e => { if(e.key==='Enter') { stockSuggestBox.style.display='none'; renderStockList(); }});
+searchStockInput.addEventListener('blur', () => setTimeout(() => stockSuggestBox.style.display='none', 160));
+searchStockInput.addEventListener('focus', showStockSuggestions);
+
+function showStockSuggestions() {
+  const val = searchStockInput.value.trim().toLowerCase();
+  const field = searchStockFilter.value;
+  if (!val) { stockSuggestBox.style.display='none'; return; }
+  const arr = loadData(STOCK_KEY);
+  const uniq = [...new Set(arr.map(e=>(e[field]||'')).filter(v=>v.toLowerCase().includes(val)))].slice(0,8);
+  stockSuggestBox.innerHTML = uniq.map(s=>`<div class="suggest-item" onmousedown="pickStockSuggest('${s.replace(/'/g,"\\'")}')"><i class="bi bi-search"></i> ${esc(s)}</div>`).join('');
+  stockSuggestBox.style.display = uniq.length ? 'block' : 'none';
+}
+function pickStockSuggest(val) {
+  searchStockInput.value = val;
+  stockQuery = val;
+  stockSuggestBox.style.display = 'none';
+  renderStockList();
+}
+function clearStockSearch() {
+  searchStockInput.value = '';
+  stockQuery = '';
+  stockSuggestBox.style.display = 'none';
+  renderStockList();
+}
+
+window.deleteStock = function(id) {
+  if (!confirm('ต้องการลบอะไหล่นี้?')) return;
+  let arr = loadData(STOCK_KEY).filter(e=>e.id!==id);
+  saveData(STOCK_KEY, arr);
+  toast('ลบอะไหล่แล้ว','error');
+  renderStockList();
+  renderDashboard();
+  renderGalleryPage();
+};
+
+// ===== IMAGE UPLOAD HELPER =====
+function createImageUploader(imageFiles, onUpdate, maxImages=8) {
+  function renderThumbs() {
+    const wrap = document.getElementById('formThumbs');
+    if (!wrap) return;
+    wrap.innerHTML = imageFiles.map((img,i) => `
+      <div class="form-thumb-wrap">
+        <img src="${img}" class="form-thumb-img" onclick="openGalleryModal(window._formImgs,${i},'Preview')" alt="รูป${i+1}">
+        <button class="form-thumb-del" onclick="delFormImg(${i})">×</button>
+      </div>
+    `).join('');
+    window._formImgs = imageFiles;
+    window.delFormImg = function(idx) { imageFiles.splice(idx,1); renderThumbs(); if(onUpdate) onUpdate(); };
+  }
+
+  const zone = document.getElementById('uploadZone');
+  const fileInput = document.getElementById('fileInput');
+  if (zone) {
+    zone.onclick = () => fileInput && fileInput.click();
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      handleFiles(Array.from(e.dataTransfer.files));
+    });
+  }
+  if (fileInput) {
+    fileInput.onchange = e => {
+      handleFiles(Array.from(e.target.files));
+      setTimeout(() => fileInput.value='', 200);
+    };
+  }
+  function handleFiles(files) {
+    let remain = maxImages - imageFiles.length;
+    files.slice(0, remain).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const r = new FileReader();
+      r.onload = e => { imageFiles.push(e.target.result); renderThumbs(); };
+      r.readAsDataURL(file);
+    });
+    if (files.length > remain) toast(`อัปโหลดได้สูงสุด ${maxImages} รูป`, 'error');
+  }
+  renderThumbs();
+}
+
+// ===== FORMS =====
+function closeFormModal() {
+  document.getElementById('formModal').classList.remove('active');
+  document.getElementById('formModalContent').innerHTML = '';
+}
+
+function showErrorForm(id=null) {
+  if (currentRole !== 'admin') { toast('เฉพาะ Admin เท่านั้น', 'error'); return; }
+  const arr = loadData(ERROR_KEY);
+  const item = id ? arr.find(e=>e.id===id) : null;
+  let imageFiles = item ? item.images.slice() : [];
+
+  document.getElementById('formModalContent').innerHTML = `
+    <h2><i class="bi bi-exclamation-circle" style="color:var(--danger)"></i> ${item?'แก้ไข':'เพิ่ม'} Error Code</h2>
+    <div class="form-group"><label>แบรนด์ *</label><input type="text" id="f_brand" value="${item?esc(item.brand):''}" placeholder="เช่น Samsung, LG"></div>
+    <div class="form-group"><label>ประเภทเครื่อง *</label><input type="text" id="f_type" value="${item?esc(item.type):''}" placeholder="เช่น เครื่องซักผ้า, แอร์"></div>
+    <div class="form-group"><label>หมายเลขรุ่น *</label><input type="text" id="f_model" value="${item?esc(item.model):''}" placeholder="เช่น WF-T8572"></div>
+    <div class="form-group"><label>Error Code *</label><input type="text" id="f_errorCode" value="${item?esc(item.errorCode):''}" placeholder="เช่น E1, F7"></div>
+    <div class="form-group"><label>อะไหล่ที่เสีย</label><input type="text" id="f_parts" value="${item?esc(item.parts):''}"></div>
+    <div class="form-group"><label>สิ่งที่ควรเช็ค</label><textarea id="f_checkList">${item?esc(item.checkList):''}</textarea></div>
+    <div class="form-group"><label>วิธีแก้ไข</label><textarea id="f_solution">${item?esc(item.solution):''}</textarea></div>
+    <div class="form-group">
+      <label>รูปภาพ (สูงสุด 8 รูป)</label>
+      <div class="upload-zone" id="uploadZone">
+        <i class="bi bi-cloud-upload"></i>
+        <div>คลิกหรือลากรูปมาวางที่นี่</div>
+        <div style="font-size:.82em;margin-top:4px;opacity:.7">รองรับ JPG, PNG, WEBP</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+      <div class="form-thumbs" id="formThumbs"></div>
+    </div>
+    <button class="save-btn" onclick="saveErrorForm('${id||''}')"><i class="bi bi-save"></i> ${item?'บันทึกการแก้ไข':'บันทึกข้อมูล'}</button>
+  `;
+  document.getElementById('formModal').classList.add('active');
+  createImageUploader(imageFiles);
+  window._currentFormImages = imageFiles;
+}
+
+window.showErrorForm = showErrorForm;
+
+function saveErrorForm(id) {
+  const brand = document.getElementById('f_brand').value.trim();
+  const type = document.getElementById('f_type').value.trim();
+  const model = document.getElementById('f_model').value.trim();
+  const errorCode = document.getElementById('f_errorCode').value.trim();
+  if (!brand||!type||!model||!errorCode) { toast('กรอกข้อมูลที่จำเป็นให้ครบ!','error'); return; }
+  const rec = {
+    id: id||uuid(), brand, type, model, errorCode,
+    parts: document.getElementById('f_parts').value.trim(),
+    checkList: document.getElementById('f_checkList').value.trim(),
+    solution: document.getElementById('f_solution').value.trim(),
+    images: (window._currentFormImages||[]).slice()
+  };
+  let arr = loadData(ERROR_KEY);
+  if (id) { const idx=arr.findIndex(e=>e.id===id); arr[idx]=rec; }
+  else arr.push(rec);
+  saveData(ERROR_KEY, arr);
+  toast(id?'แก้ไขแล้ว':'เพิ่ม Error Code แล้ว','success');
+  closeFormModal();
+  renderErrorList();
+  renderDashboard();
+  renderGalleryPage();
+}
+
+function showStockForm(id=null) {
+  if (currentRole !== 'admin') { toast('เฉพาะ Admin เท่านั้น', 'error'); return; }
+  const arr = loadData(STOCK_KEY);
+  const item = id ? arr.find(e=>e.id===id) : null;
+  let imageFiles = item ? item.images.slice() : [];
+
+  document.getElementById('formModalContent').innerHTML = `
+    <h2><i class="bi bi-box-seam" style="color:var(--success)"></i> ${item?'แก้ไข':'เพิ่ม'} อะไหล่</h2>
+    <div class="form-group"><label>ชื่ออะไหล่ *</label><input type="text" id="f_partName" value="${item?esc(item.partName):''}"></div>
+    <div class="form-group"><label>สำหรับรุ่น</label><input type="text" id="f_forModel" value="${item?esc(item.forModel):''}"></div>
+    <div class="form-group"><label>แบรนด์</label><input type="text" id="f_partBrand" value="${item?esc(item.partBrand):''}"></div>
+    <div class="form-group"><label>จำนวนในคลัง *</label><input type="number" id="f_qty" min="0" value="${item?item.qty:0}"></div>
+    <div class="form-group"><label>หมายเหตุ</label><input type="text" id="f_partNote" value="${item?esc(item.partNote):''}"></div>
+    <div class="form-group">
+      <label>รูปภาพอะไหล่ (สูงสุด 8 รูป)</label>
+      <div class="upload-zone" id="uploadZone">
+        <i class="bi bi-cloud-upload"></i>
+        <div>คลิกหรือลากรูปมาวางที่นี่</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+      <div class="form-thumbs" id="formThumbs"></div>
+    </div>
+    <button class="save-btn" onclick="saveStockForm('${id||''}')"><i class="bi bi-save"></i> ${item?'บันทึกการแก้ไข':'บันทึกข้อมูล'}</button>
+  `;
+  document.getElementById('formModal').classList.add('active');
+  createImageUploader(imageFiles);
+  window._currentFormImages = imageFiles;
+}
+
+window.showStockForm = showStockForm;
+
+function saveStockForm(id) {
+  const partName = document.getElementById('f_partName').value.trim();
+  const qty = parseInt(document.getElementById('f_qty').value,10)||0;
+  if (!partName) { toast('กรอกชื่ออะไหล่!','error'); return; }
+  const rec = {
+    id: id||uuid(), partName,
+    forModel: document.getElementById('f_forModel').value.trim(),
+    partBrand: document.getElementById('f_partBrand').value.trim(),
+    qty,
+    partNote: document.getElementById('f_partNote').value.trim(),
+    images: (window._currentFormImages||[]).slice()
+  };
+  let arr = loadData(STOCK_KEY);
+  if (id) { const idx=arr.findIndex(e=>e.id===id); arr[idx]=rec; }
+  else arr.push(rec);
+  saveData(STOCK_KEY, arr);
+  toast(id?'แก้ไขแล้ว':'เพิ่มอะไหล่แล้ว','success');
+  closeFormModal();
+  renderStockList();
+  renderDashboard();
+  renderGalleryPage();
+}
+
+document.getElementById('formModal').addEventListener('click', function(e) {
+  if (e.target === this) closeFormModal();
+});
+
+// ===== GALLERY PAGE =====
+function getAllImages() {
+  const errors = loadData(ERROR_KEY);
+  const stocks = loadData(STOCK_KEY);
+  const imgs = [];
+  errors.forEach(e => (e.images||[]).forEach((img,i) => imgs.push({
+    src: img, source: 'error', label: `${e.brand} ${e.model}`, sub: `Error: ${e.errorCode}`,
+    allImgs: e.images, idx: i, title: `${e.brand} ${e.model} - ${e.errorCode}`
+  })));
+  stocks.forEach(s => (s.images||[]).forEach((img,i) => imgs.push({
+    src: img, source: 'stock', label: s.partName, sub: `${s.partBrand||''}`,
+    allImgs: s.images, idx: i, title: `อะไหล่: ${s.partName}`
+  })));
+  return imgs;
+}
+
+function renderGalleryPage() {
+  const source = document.getElementById('gallerySource').value;
+  const q = document.getElementById('gallerySearch').value.toLowerCase();
+  let imgs = getAllImages();
+  if (source !== 'all') imgs = imgs.filter(i=>i.source===source);
+  if (q) imgs = imgs.filter(i=>(i.label+i.sub).toLowerCase().includes(q));
+
+  const grid = document.getElementById('galleryPageGrid');
+  const empty = document.getElementById('galleryEmpty');
+  if (!imgs.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = imgs.map((img,i) => `
+    <div onclick="openGalleryModal(${JSON.stringify(img.allImgs).replace(/"/g,'&quot;')},${img.idx},'${esc(img.title)}')"
+      style="cursor:pointer; border-radius:10px; overflow:hidden; border:2px solid var(--border); background:var(--card2); transition:var(--transition);"
+      onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="${img.src}" style="width:100%;aspect-ratio:1/1;object-fit:cover;display:block;" alt="${esc(img.label)}">
+      <div style="padding:6px 8px; font-size:.8em; color:var(--text2);">
+        <div style="font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(img.label)}</div>
+        <div style="font-size:.85em;">${esc(img.sub)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== GALLERY MODAL =====
+function openGalleryModal(list, idx, title='') {
+  galleryModalList = list;
+  galleryModalIdx = idx;
+  galleryModalTab = 'single';
+  document.getElementById('galleryModalTitle').textContent = title;
+  document.querySelectorAll('.gallery-tab-btn').forEach((b,i)=> b.classList.toggle('active', i===0));
+  renderGalleryModalBody();
+  document.getElementById('galleryModal').classList.add('active');
+}
+window.openGalleryModal = openGalleryModal;
+
+function closeGalleryModal() {
+  document.getElementById('galleryModal').classList.remove('active');
+}
+
+function setGalleryModalTab(tab, el) {
+  galleryModalTab = tab;
+  document.querySelectorAll('.gallery-tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderGalleryModalBody();
+}
+
+function renderGalleryModalBody() {
+  const body = document.getElementById('galleryModalBody');
+  if (galleryModalTab === 'single') {
+    body.innerHTML = `
+      <div class="gallery-single-view">
+        <img src="${galleryModalList[galleryModalIdx]}" alt="รูป ${galleryModalIdx+1}" id="gSingleImg">
+        <div class="gallery-nav">
+          <button class="gallery-nav-btn" onclick="gNavPrev()"><i class="bi bi-chevron-left"></i></button>
+          <span class="gallery-counter" id="gCounter">${galleryModalIdx+1} / ${galleryModalList.length}</span>
+          <button class="gallery-nav-btn" onclick="gNavNext()"><i class="bi bi-chevron-right"></i></button>
+        </div>
+        <div class="gallery-caption">รูปที่ ${galleryModalIdx+1} จากทั้งหมด ${galleryModalList.length} รูป</div>
+      </div>
+    `;
+  } else if (galleryModalTab === 'grid') {
+    body.innerHTML = `
+      <div class="gallery-grid-view">
+        ${galleryModalList.map((img,i) => `
+          <div class="gallery-grid-item" onclick="galleryModalIdx=${i};setGalleryModalTab('single',document.querySelectorAll('.gallery-tab-btn')[0])">
+            <img src="${img}" alt="รูป ${i+1}">
+            <div class="ggi-num">${i+1}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (galleryModalTab === 'compare') {
+    const opts = galleryModalList.map((img,i) => `<option value="${i}" ${i===galleryModalIdx?'selected':''}>รูปที่ ${i+1}</option>`).join('');
+    const opts2 = galleryModalList.map((img,i) => `<option value="${i}" ${i===Math.min(galleryModalIdx+1,galleryModalList.length-1)?'selected':''}>รูปที่ ${i+1}</option>`).join('');
+    body.innerHTML = `
+      <div class="gallery-compare-view">
+        <div class="compare-panel">
+          <select onchange="updateCompareImg('A',this.value)">${opts}</select>
+          <div class="compare-img-wrap"><img id="compareImgA" src="${galleryModalList[galleryModalIdx]}" alt="A"></div>
+          <div class="compare-info" id="compareInfoA">รูปที่ ${galleryModalIdx+1}</div>
+        </div>
+        <div class="compare-panel">
+          <select onchange="updateCompareImg('B',this.value)">${opts2}</select>
+          <div class="compare-img-wrap"><img id="compareImgB" src="${galleryModalList[Math.min(galleryModalIdx+1,galleryModalList.length-1)]}" alt="B"></div>
+          <div class="compare-info" id="compareInfoB">รูปที่ ${Math.min(galleryModalIdx+2,galleryModalList.length)}</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+window.updateCompareImg = function(side, idx) {
+  document.getElementById('compareImg'+side).src = galleryModalList[idx];
+  document.getElementById('compareInfo'+side).textContent = 'รูปที่ '+(+idx+1);
+};
+
+function gNavPrev() {
+  galleryModalIdx = (galleryModalIdx-1+galleryModalList.length)%galleryModalList.length;
+  document.getElementById('gSingleImg').src = galleryModalList[galleryModalIdx];
+  document.getElementById('gCounter').textContent = `${galleryModalIdx+1} / ${galleryModalList.length}`;
+}
+function gNavNext() {
+  galleryModalIdx = (galleryModalIdx+1)%galleryModalList.length;
+  document.getElementById('gSingleImg').src = galleryModalList[galleryModalIdx];
+  document.getElementById('gCounter').textContent = `${galleryModalIdx+1} / ${galleryModalList.length}`;
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (document.getElementById('galleryModal').classList.contains('active')) {
+    if (e.key==='ArrowLeft') gNavPrev();
+    if (e.key==='ArrowRight') gNavNext();
+    if (e.key==='Escape') closeGalleryModal();
+  }
+  if (document.getElementById('formModal').classList.contains('active') && e.key==='Escape') closeFormModal();
+});
+// Swipe support for gallery
+let touchStartX = 0;
+document.getElementById('galleryModal').addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+document.getElementById('galleryModal').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx)>50 && galleryModalTab==='single') { dx<0?gNavNext():gNavPrev(); }
+});
+
+function openCompareModal() {
+  const imgs = getAllImages();
+  if (imgs.length<2) { toast('ต้องมีรูปภาพอย่างน้อย 2 รูป','error'); return; }
+  openGalleryModal(imgs.map(i=>i.src), 0, 'เปรียบเทียบรูปภาพ');
+  setGalleryModalTab('compare', document.querySelectorAll('.gallery-tab-btn')[2]);
+}
+
+// ===== IMPORT/EXPORT =====
+function exportData(type) {
+  const key = type==='error' ? ERROR_KEY : STOCK_KEY;
+  const data = loadData(key);
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${type}_data_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast(`Export ${type} สำเร็จ`, 'success');
+}
+
+function importData(type, input) {
+  if (!input.files.length) return;
+  const key = type==='error' ? ERROR_KEY : STOCK_KEY;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      let arr = loadData(key);
+      let added=0, dup=0;
+      data.forEach(d => {
+        if (arr.some(x=>x.id===d.id)) dup++;
+        else { arr.push(d); added++; }
+      });
+      saveData(key, arr);
+      toast(`นำเข้าสำเร็จ: +${added} รายการ, ซ้ำ ${dup} รายการ`, 'success');
+      if (type==='error') { renderErrorList(); } else { renderStockList(); }
+      renderDashboard();
+      renderGalleryPage();
+    } catch { toast('ไฟล์ไม่ถูกต้อง','error'); }
+    input.value='';
+  };
+  reader.readAsText(input.files[0]);
+}
+</script>
+</body>
+</html>
